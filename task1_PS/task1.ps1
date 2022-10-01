@@ -1,25 +1,29 @@
 #Check of 3 arguments.
 if ($args.Count -ne 3){
-    Write-Output "It should be 3 arguments. Please try again"
+    Write-Error -Message "It should be 3 arguments. Please try again" -ErrorAction Stop 
 }
 
 #Pattern of IP address from 0.0.0.0 - 255.255.255.255
 $pattern = "^([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}$"
 
+#$pattern of Subnet address 255.0.0.0.0- 255.255.255.255
+
+
 #Pattern of Subnet prefix 0-32
 $pattern2 = "^([0-9]|[12][0-9]|3[012])$"
 
+
 #Check of input format
 if (!($args[0] -match $pattern)){
-    Write-Output "First argument should be IP address. Format should be x.x.x.x .  Please try again."
+    Write-Error -Message "First argument should be IP address. Format should be x.x.x.x .  Please try again." -ErrorAction Stop  
 }
 
 elseif (!($args[1] -match $pattern)) {
-    Write-Output "Second argument should be IP address. Format should be x.x.x.x .  Please try again."
+    Write-Error -Message "Second argument should be IP address. Format should be x.x.x.x .  Please try again." -ErrorAction Stop 
 }
 
 elseif ((!($args[2] -match $pattern)) -and (!($args[2] -match $pattern2)))  {
-    Write-Output "Third argument should be Subnet mask address or subnet prefix. Format should be x.x.x.x or for prefix xx .  Please try again."
+    Write-Error -Message "Third argument should be Subnet mask address or subnet prefix. Format should be x.x.x.x or for prefix xx .  Please try again." -ErrorAction Stop  
 }
 
 

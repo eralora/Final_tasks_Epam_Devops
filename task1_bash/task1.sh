@@ -2,20 +2,9 @@
 
 
 
-
-#Check if user put arguments
-
-if [ -z $1 ]; then
-	echo "YOU HAVE TO WRITE ACCOUNTS.CSV IN ARGUMENT"
-	exit
-
-fi
-
-
-
 #Get three columns from csv_file and send output to right side of pipe | get first letter of Name and merge with Surname + location_id + just ID, make it all lowercase. Put outputs to tmp1.txt
 
-awk -F',' '{print $3,$2,$1}' ./$1 | awk '{print tolower(substr($1,1,1) $2)","$3","$4}' > ./tmp.csv
+awk -F',' '{print $3,$2,$1}' ./"$1" | awk '{print tolower(substr($1,1,1) $2)","$3","$4}' > ./tmp.csv
 
 #Checking if there any duplicated values in column if yes so add location_add + appropriate domain, else just add domain name. Also add  additional column ID. Put output to tmp2.csv file
 
@@ -41,9 +30,9 @@ awk -F, 'NR==FNR {
 }'  ./tmp.csv ./tmp.csv > ./tmp1.csv
 
 
-#Add created email address from tmp.csv -> accounts.csv's 5th column via ID's.Use " -vFPAT='([^,]*)|("[^"]+")'" this to ignore comma's into quotes from 'title' column
+#Add created email address from tmp.csv -> accounts.csv's 5th column via ID's.Use " -vFPAT='([^,]*)|("[^"]+")'" this to ignore comma's in quotes from 'title' column
 
-awk -vFPAT='([^,]*)|("[^"]+")' 'FNR==NR{a[$2]=$1;next} $1 in a{$5=a[$1]} 1' OFS=, ./tmp1.csv ./$1 > ./tmp2.csv
+awk -vFPAT='([^,]*)|("[^"]+")' 'FNR==NR{a[$2]=$1;next} $1 in a{$5=a[$1]} 1' OFS=, ./tmp1.csv ./"$1" > ./tmp2.csv
 
 #Make Name and Surname's first letter uppercase
 
@@ -55,9 +44,12 @@ awk -F, -v OFS=, '
       $3 = $3 toupper(substr(f[i], 1, 1)) \
               substr(f[i], 2) s[i]
   }
-  {print}' < ./tmp2.csv > ./accounts_new.csv
+  1' ./tmp2.csv > tmp3.csv
+
+#UPGRADE! Changing Name >>> name. In code above all column value's first letter became uppercase also title 'name'.
+awk -F' ' '{gsub(/Name/, "name"); print}' ./tmp3.csv > ./accounts_new.csv 
 
 #Delete all tmp* files
-rm ./tmp.csv ./tmp1.csv ./tmp2.csv
+rm ./tmp.csv ./tmp1.csv ./tmp2.csv ./tmp3.csv
 
 
